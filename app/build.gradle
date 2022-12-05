@@ -1,0 +1,51 @@
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'application'
+}
+
+
+java {
+    withSourcesJar()
+	withJavadocJar()
+}
+
+version = '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+
+	implementation 'com.microsoft.ews-java-api:ews-java-api:2.0'
+	implementation('com.microsoft.azure:adal4j:1.6.4') {
+		exclude group: 'org.slf4j', module: 'slf4j-api'
+	}
+	implementation 'org.slf4j:slf4j-api:1.7.21'
+    implementation 'com.azure:azure-identity:1.5.0'
+    implementation 'com.microsoft.graph:microsoft-graph:5.22.0'
+    implementation 'com.google.guava:guava:31.0.1-jre'
+	compileOnly 'javax.enterprise.concurrent:javax.enterprise.concurrent-api:1.1'
+	implementation 'com.google.code.gson:gson:2.10'
+	implementation gradleApi()
+}
+
+application {
+    mainClass = 'sendmail.App'
+}
+
+processResources {
+	with copySpec {
+		from 'src/main/filteredresources/app.properties'
+		filter(ReplaceTokens, tokens: [client_id: client_id, 
+				scope: scope,
+				tenant_id: tenant_id,
+				authority: authority,
+				client_secret: client_secret,
+				operator_chapel_user_id: operator_chapel_user_id
+				])
+	}
+}
